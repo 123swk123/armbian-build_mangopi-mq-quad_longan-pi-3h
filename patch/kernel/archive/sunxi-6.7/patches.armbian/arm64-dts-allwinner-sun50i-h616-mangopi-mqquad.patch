@@ -41,7 +41,7 @@ index 000000000000..634e34dfdb46
 +
 +/ {
 +	model = "MangoPi MQ-Quad";
-+	compatible = "xunlong,mangopi-mqquad", "allwinner,sun50i-h616";
++	compatible = "mangopi,mq-quad", "allwinner,sun50i-h616";
 +};
 +
 +&cpu0  {
