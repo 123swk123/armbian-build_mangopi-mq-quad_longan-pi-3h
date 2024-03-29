@@ -1,0 +1,156 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: rymut <rymut@users.noreply.github.com>
+Date: Fri, 29 Mar 2024 20:52:43 +0100
+Subject: Add MangoPi MQ-Quad board
+
+Signed-off-by: rymut <rymut@users.noreply.github.com>
+---
+ arch/arm/dts/Makefile                       |  1 +
+ arch/arm/dts/sun50i-h616-mangopi-mqquad.dts | 84 ++++++++++
+ configs/mangopi_mqquad_defconfig            | 29 ++++
+ 3 files changed, 114 insertions(+)
+
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index c16b647184..8c8ed7ad21 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -832,10 +832,11 @@ dtb-$(CONFIG_MACH_SUN50I_H6) += \
+ 	sun50i-h6-pine-h64.dtb \
+ 	sun50i-h6-pine-h64-model-b.dtb \
+ 	sun50i-h6-tanix-tx6.dtb \
+ 	sun50i-h6-tanix-tx6-mini.dtb
+ dtb-$(CONFIG_MACH_SUN50I_H616) += \
++	sun50i-h616-mangopi-mqquad.dtb \
+ 	sun50i-h616-orangepi-zero2.dtb \
+ 	sun50i-h618-orangepi-zero3.dtb \
+ 	sun50i-h616-x96-mate.dtb
+ dtb-$(CONFIG_MACH_SUN50I) += \
+ 	sun50i-a64-amarula-relic.dtb \
+diff --git a/arch/arm/dts/sun50i-h616-mangopi-mqquad.dts b/arch/arm/dts/sun50i-h616-mangopi-mqquad.dts
+new file mode 100644
+index 0000000000..7558e6c748
+--- /dev/null
++++ b/arch/arm/dts/sun50i-h616-mangopi-mqquad.dts
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2020 Arm Ltd.
++ */
++
++/dts-v1/;
++
++#include "sun50i-h616-orangepi-zero.dtsi"
++
++/ {
++	model = "MangoPi MQ-Quad";
++	compatible = "mangopi,mq-quad", "allwinner,sun50i-h616";
++};
++
++&emac0 {
++	allwinner,rx-delay-ps = <3100>;
++	allwinner,tx-delay-ps = <700>;
++	phy-mode = "rgmii";
++	phy-supply = <&reg_dldo1>;
++};
++
++&mmc0 {
++	vmmc-supply = <&reg_dldo1>;
++};
++
++&r_i2c {
++	status = "okay";
++
++	axp313: pmic@36 {
++		compatible = "x-powers,axp313a";
++		reg = <0x36>;
++		#interrupt-cells = <1>;
++
++		vin1-supply = <&reg_vcc5v>;
++		vin2-supply = <&reg_vcc5v>;
++		vin3-supply = <&reg_vcc5v>;
++
++		regulators {
++			/* Supplies VCC-PLL, so needs to be always on. */
++			reg_aldo1: aldo1 {
++				regulator-always-on;
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-name = "vcc1v8";
++			};
++
++			/* Supplies VCC-IO, so needs to be always on. */
++			reg_dldo1: dldo1 {
++				regulator-always-on;
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-name = "vcc3v3";
++			};
++
++			reg_dcdc1: dcdc1 {
++				regulator-always-on;
++				regulator-min-microvolt = <810000>;
++				regulator-max-microvolt = <990000>;
++				regulator-name = "vdd-gpu-sys";
++			};
++
++			reg_dcdc2: dcdc2 {
++				regulator-always-on;
++				regulator-min-microvolt = <810000>;
++				regulator-max-microvolt = <1100000>;
++				regulator-name = "vdd-cpu";
++			};
++
++			reg_dcdc3: dcdc3 {
++				regulator-always-on;
++				regulator-min-microvolt = <1500000>;
++				regulator-max-microvolt = <1500000>;
++				regulator-name = "vdd-dram";
++			};
++		};
++	};
++};
++&pio {
++	vcc-pc-supply = <&reg_dldo1>;
++	vcc-pf-supply = <&reg_dldo1>;
++	vcc-pg-supply = <&reg_aldo1>;
++	vcc-ph-supply = <&reg_dldo1>;
++	vcc-pi-supply = <&reg_dldo1>;
++};
+diff --git a/configs/mangopi_mqquad_defconfig b/configs/mangopi_mqquad_defconfig
+new file mode 100644
+index 0000000000..1b55dccdee
+--- /dev/null
++++ b/configs/mangopi_mqquad_defconfig
+@@ -0,0 +1,29 @@
++CONFIG_ARM=y
++CONFIG_ARCH_SUNXI=y
++CONFIG_DEFAULT_DEVICE_TREE="sun50i-h616-mangopi-mqquad"
++CONFIG_SPL=y
++CONFIG_DRAM_SUN50I_H616_DX_ODT=0x08080808
++CONFIG_DRAM_SUN50I_H616_DX_DRI=0x0e0e0e0e
++CONFIG_DRAM_SUN50I_H616_CA_DRI=0x0e0e
++CONFIG_DRAM_SUN50I_H616_TPR10=0xf83438
++CONFIG_MACH_SUN50I_H616=y
++CONFIG_SUNXI_DRAM_H616_DDR3_1333=y
++CONFIG_USB1_VBUS_PIN="PC16"
++CONFIG_R_I2C_ENABLE=y
++CONFIG_SPL_SPI_SUNXI=y
++# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
++CONFIG_SPL_I2C=y
++CONFIG_SPL_SYS_I2C_LEGACY=y
++CONFIG_SYS_I2C_MVTWSI=y
++CONFIG_SYS_I2C_SLAVE=0x7f
++CONFIG_SYS_I2C_SPEED=400000
++CONFIG_SPI_FLASH_MACRONIX=y
++CONFIG_PHY_REALTEK=y
++CONFIG_SUN8I_EMAC=y
++CONFIG_AXP313_POWER=y
++CONFIG_AXP_DCDC3_VOLT=1350
++CONFIG_SPI=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_USB_MUSB_GADGET=y
++CONFIG_PWRLED="PC12"
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
