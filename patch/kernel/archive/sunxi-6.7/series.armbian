@@ -200,3 +200,32 @@
 	patches.armbian/arm64-dts-allwinner-sun50i-h616-PG-12c-pins.patch
 	patches.armbian/arm64-dts-allwinner-sun50i-h616-spi1-cs1-pin.patch
 	patches.armbian/arm64-dts-allwinner-sun50i-h616-mangopi-mqquad.patch
+	patches.armbian/0000-arm64-dts-allwinner-h616-Add-Sipeed-Longan-SoM-3H-an.patch
+	patches.armbian/0001-add-lpi3h-defconfig.patch
+	patches.armbian/0002-firmware-smccc-Export-revision-soc_id-function.patch
+	patches.armbian/0003-cpufreq-sun50i-Add-H616-support.patch
+	patches.armbian/0004-arm64-dts-allwinner-h616-Add-CPU-Operating.patch
+	patches.armbian/0005-arm64-dts-allwinner-h618-add-cpufreq-support-for-Sip.patch
+	patches.armbian/0006-longanpi_3h_defconfig-update-for-display-debian-etc.patch
+	patches.armbian/0007-longanpi_3h_defconfig-enable-devtmpfs.patch
+	patches.armbian/0008-longanpi_3h_defconfig-enable-cgroup-namespace.patch
+	patches.armbian/0009-drivers-aic8800-import-driver-from-vendor.patch
+	patches.armbian/0010-drivers-aic8800-fix-build.patch
+	patches.armbian/0011-drivers-aic8800-change-default-firmware-load-path.patch
+	patches.armbian/0012-drivers-aic8800-enable-5Ghz.patch
+	patches.armbian/0013-drivers-aic8800-use-UBUNTU-config.patch
+	patches.armbian/0014-drivers-aic8800-disable-debug-log.patch
+	patches.armbian/0015-longanpi_3h_defconfig-enable-tcp-cong.patch
+	patches.armbian/0016-longanpi_3h_defconfig-enable-pktgen.patch
+	patches.armbian/0017-longanpi_3h_defconfig-enable-usb-gadget-cdc-composit.patch
+	patches.armbian/0018-dts-allwinner-add-lpi3h-dtb.patch
+	patches.armbian/0019-longanpi_3h_defconfig-enable-aic8800-wifi-support.patch
+	patches.armbian/0020-drivers-add-aic8800-bluetooth-support.patch
+	patches.armbian/0021-longanpi_3h_defconfig-enable-aic8800-bluetooth-suppo.patch
+	patches.armbian/0022-drivers-fix-aic8800-bluetooth-build.patch
+	patches.armbian/0023-longanpi_3h_defconfig-add-some-usb-gadgets-configs.patch
+	patches.armbian/0024-longanpi_3h_defconfig-enable-gpio-sysfs-interface.patch
+	patches.armbian/0025-drivers-aic8800-update-vendor-drivers-to-version-of-.patch
+	patches.armbian/0026-drivers-aic8800-fix-build-for-version-of-20231212-ve.patch
+	patches.armbian/0027-longanpi_3h_defconfig-enable-CONFIG_GPIO_CDEV_V1-to-.patch
+	patches.armbian/0028-longanpi_3h_defconfig-enable-some-configs-for-docker.patch

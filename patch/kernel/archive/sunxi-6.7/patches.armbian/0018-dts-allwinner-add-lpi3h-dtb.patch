@@ -1,0 +1,24 @@
+From a7ffc2346f04e41d37f74041c2011dbcc07503e3 Mon Sep 17 00:00:00 2001
+From: root <root@localhost.arpa>
+Date: Sun, 10 Mar 2024 16:06:38 +0100
+Subject: [PATCH 18/28] dts: allwinner: add lpi3h dtb
+
+---
+ arch/arm64/boot/dts/allwinner/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index 2e7de07fd152..615e7fb1b4d9 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -58,5 +58,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h616-bigtreetech-cb1-sd.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h618-bananapi-m4-zero.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h618-orangepi-zero3.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h616-mangopi-mqquad.dtb
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h618-longanpi-3h.dtb
++
+ 
+ subdir-y	:= $(dts-dirs) overlay
+-- 
+2.34.1
+
