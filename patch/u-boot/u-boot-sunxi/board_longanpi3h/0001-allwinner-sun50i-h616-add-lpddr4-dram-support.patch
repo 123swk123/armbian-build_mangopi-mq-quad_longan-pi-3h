@@ -1,0 +1,36 @@
+From 667353094f317b3e761e654cad1be8a4d00012d1 Mon Sep 17 00:00:00 2001
+From: rymut <rymut@users.noreplay.github.comalhost.arpa>
+Date: Sun, 10 Mar 2024 18:39:13 +0100
+Subject: allwinner: sun50i: h616: add LPDDR4 DRAM support
+
+Refactor of https://github.com/sipeed/LonganPi-3H-SDK uboot patch
+0005-sunxi-H616-add-LPDDR4-DRAM-support.patch
+
+---
+ arch/arm/mach-sunxi/dram_sun50i_h616.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-sunxi/dram_sun50i_h616.c b/arch/arm/mach-sunxi/dram_sun50i_h616.c
+index c5c1331a4c..c578376fe2 100644
+--- a/arch/arm/mach-sunxi/dram_sun50i_h616.c
++++ b/arch/arm/mach-sunxi/dram_sun50i_h616.c
+@@ -951,12 +951,15 @@ static bool mctl_phy_init(const struct dram_para *para,
+ 		break;
+ 	case SUNXI_DRAM_TYPE_LPDDR4:
+ 		val = para->tpr6 >> 24 & 0xff;
++		if (val == 0)
++			val = 0x33;
+ 		break;
+ 	case SUNXI_DRAM_TYPE_DDR4:
+ 	default:
+ 		panic("This DRAM setup is currently not supported.\n");
+ 	};
+-
++	if (val == 0)
++		val = 0x80;
+ 	writel(val, SUNXI_DRAM_PHY0_BASE + 0x3dc);
+ 	writel(val, SUNXI_DRAM_PHY0_BASE + 0x45c);
+ 
+-- 
+2.34.1
+
