@@ -9,6 +9,35 @@
 <a href=https://github.com/armbian/build/commits/main><img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/armbian/build/main?logo=github&label=Last%20commit&style=for-the-badge&branch=main&logoColor=white"></a>
 </p>
 
+## MangoPi QM-Quad / LonganPi 3H support
+
+This repository contains patches supporting boards:
+
+- MangoPi QM-Quad (H616)
+- Sipeed LonganPi 3H (H618)
+
+### MangoPi QM-Quad (H616)
+
+What works: everything should work fine, gpio was not yet tested.
+
+What needs to be done:
+
+[ ] Verify GPIO setup in DTS
+[ ] Refactor DTS to not use orangepi-zero.dtsi
+
+### LonganPi 3H (H618)
+
+What works: everything should work fine, gpio was not yet tested.
+
+Know issues:
+
+- wifi (user needs manually copy firmware files from https://github.com/sipeed/LonganPi-3H-SDK/tree/main/overlay/usr/lib/firmware to sdcard /usr/lib/firmware)
+
+What needs to be done:
+
+[ ] Refactor patches
+[ ] Verify GPIO setup in DTS
+
 ## What does this project do?
 
 - Builds custom **kernel**, **image** or a **distribution** optimized for low-resource hardware,
