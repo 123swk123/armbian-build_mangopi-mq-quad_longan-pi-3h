@@ -1,0 +1,199 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: John Doe <john.doe@somewhere.on.planet>
+Date: Mon, 1 Apr 2024 12:21:19 +0200
+Subject: Patching kernel sunxi64 files
+ arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi
+ arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts
+
+Signed-off-by: John Doe <john.doe@somewhere.on.planet>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi | 14 ++
+ arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts       | 76 +++++++---
+ 2 files changed, 66 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi
+index 45cb11275a23..84817719dc4e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h618-longan-module-3h.dtsi
+@@ -13,10 +13,16 @@ / {
+ 	compatible = "sipeed,longan-module-3h", "allwinner,sun50i-h618";
+ };
+ 
+ &cpu0 {
+ 	cpu-supply = <&reg_dcdc2>;
++	status = "okay";
++};
++
++&gpu {
++	mali-supply = <&reg_dcdc1>;
++	status = "okay";
+ };
+ 
+ &mmc2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc2_pins>;
+@@ -34,10 +40,18 @@ &r_i2c {
+ 	status = "okay";
+ 
+ 	axp313: pmic@36 {
+ 		compatible = "x-powers,axp313a";
+ 		reg = <0x36>;
++		#interrupt-cells = <1>;
++		interrupt-controller;
++		interrupt-parent = <&pio>;
++		interrupts = <2 9 IRQ_TYPE_LEVEL_LOW>;	/* PC9 */
++
++		vin1-supply = <&reg_vcc5v>;
++		vin2-supply = <&reg_vcc5v>;
++		vin3-supply = <&reg_vcc5v>;
+ 
+ 		regulators {
+ 			/* Supplies VCC-PLL, so needs to be always on. */
+ 			reg_aldo1: aldo1 {
+ 				regulator-always-on;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts b/arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts
+index f1c8e7603cd5..8bc92adb0407 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h618-longanpi-3h.dts
+@@ -37,21 +37,21 @@ hdmi_con_in: endpoint {
+ 
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+ 		led-0 {
++			function = LED_FUNCTION_STATUS;
+ 			color = <LED_COLOR_ID_ORANGE>;
+-			function = LED_FUNCTION_INDICATOR;
+-			function-enumerator = <0>;
+ 			gpios = <&pio 6 2 GPIO_ACTIVE_LOW>; /* PG2 */
++			linux,default-trigger = "heartbeat";
+ 		};
+ 
+ 		led-1 {
+-			color = <LED_COLOR_ID_ORANGE>;
+ 			function = LED_FUNCTION_INDICATOR;
+-			function-enumerator = <1>;
++			color = <LED_COLOR_ID_ORANGE>;
+ 			gpios = <&pio 6 4 GPIO_ACTIVE_LOW>; /* PG4 */
++			function-enumerator = <1>;
+ 		};
+ 	};
+ 
+ 	reg_vcc5v: vcc5v {
+ 		/* board wide 5V supply directly from the USB-C socket */
+@@ -59,44 +59,59 @@ reg_vcc5v: vcc5v {
+ 		regulator-name = "vcc-5v";
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 		regulator-always-on;
+ 	};
+-};
++	
++	reg_usb1_vbus: regulator-usb1-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb1-vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&reg_vcc5v>;
++		enable-active-high;
++		gpio = <&pio 2 16 GPIO_ACTIVE_HIGH>; /* PC16 */
++		status = "okay";
++	};
+ 
+-&axp313 {
+-	vin1-supply = <&reg_vcc5v>;
+-	vin2-supply = <&reg_vcc5v>;
+-	vin3-supply = <&reg_vcc5v>;
+-};
++	reg_vcc33_wifi: vcc33-wifi {
++		/* Always on 3.3V regulator for WiFi and BT */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc33-wifi";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&reg_vcc5v>;
++	};
+ 
+-&ehci1 {
+-	status = "okay";
++	reg_vcc_wifi_io: vcc-wifi-io {
++		/* Always on 1.8V/300mA regulator for WiFi and BT IO */
++		compatible = "regulator-fixed";
++		regulator-name = "vcc-wifi-io";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++		vin-supply = <&reg_vcc33_wifi>;
++	};
+ };
+ 
+-&ohci1 {
+-	status = "okay";
+-};
+ 
+-&ehci2 {
+-	status = "okay";
+-};
+ 
+-&gpu {
+-	mali-supply = <&reg_dcdc1>;
++
++&de {
+ 	status = "okay";
+ };
+ 
+-&ohci2 {
++&ehci1 {
+ 	status = "okay";
+ };
+ 
+-&ehci3 {
++&ehci2 {
+ 	status = "okay";
+ };
+ 
+-&ohci3 {
++&ehci3 {
+ 	status = "okay";
+ };
+ 
+ &emac0 {
+ 	pinctrl-names = "default";
+@@ -131,10 +146,23 @@ &mmc0 {
+ 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;	/* PF6 */
+ 	vmmc-supply = <&reg_dldo1>;
+ 	status = "okay";
+ };
+ 
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&ohci3 {
++	status = "okay";
++};
++
++
+ &uart0 {
+ 	status = "okay";
+ };
+ 
+ &usbotg {
+@@ -152,8 +180,8 @@ &usbotg {
+ 	dr_mode = "peripheral";
+ 	status = "okay";
+ };
+ 
+ &usbphy {
+-	usb1_vbus-supply = <&reg_vcc5v>;
++	usb1_vbus-supply = <&reg_usb1_vbus>;
+ 	status = "okay";
+ };
+-- 
+Created with Armbian build tools https://github.com/armbian/build
+
