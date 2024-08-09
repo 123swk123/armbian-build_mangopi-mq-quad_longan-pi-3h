@@ -110,6 +110,7 @@ function create_new_rootfs_cache_via_debootstrap() {
 	fi
 
 	deboostrap_arguments+=("--foreign") # release name
+	deboostrap_arguments+=("--keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg")
 
 	deboostrap_arguments+=("${RELEASE}" "${SDCARD}/" "${debootstrap_apt_mirror}") # release, path and mirror; always last, positional arguments.
 

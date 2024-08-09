@@ -99,11 +99,19 @@ function install_deb_chroot() {
 		fi
 	fi
 
+	# downgrade if its armbian-base-file
+	local downgrade=""
+	declare -A -g image_artifacts_debs_reversioned # global associative array
+	declare revisioned_deb_rel_path="${image_artifacts_debs_reversioned["armbian-base-files"]}"
+	if [[ "$(basename "${revisioned_deb_rel_path}")" == "${package_filename}" ]]; then
+		downgrade="--allow-downgrades"
+	fi
+
 	# install in chroot via apt-get, not dpkg, so dependencies are also installed from repo if needed.
 	declare -g if_error_detail_message="Installation of $install_target failed ${BOARD} ${RELEASE} ${BUILD_DESKTOP} ${LINUXFAMILY}"
 	declare -a extra_apt_envs=()
 	extra_apt_envs+=("ARMBIAN_IMAGE_BUILD_BOOTFS_TYPE=${BOOTFS_TYPE:-"unset"}")                             # used by package postinst scripts to bevahe
-	DONT_MAINTAIN_APT_CACHE="yes" chroot_sdcard_apt_get --no-install-recommends install "${install_target}" # don't auto-maintain apt cache when installing from packages.
+	DONT_MAINTAIN_APT_CACHE="yes" chroot_sdcard_apt_get --no-install-recommends ${downgrade} install "${install_target}" # don't auto-maintain apt cache when installing from packages.
 	unset extra_apt_envs
 
 	# IMPORTANT! Do not use short-circuit above as last statement in a function, since it determines the result of the function.
